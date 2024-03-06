@@ -1,0 +1,50 @@
+manifests:
+  - apiVersion: networking.istio.io/v1beta1
+    kind: Gateway
+    metadata:
+      name: nginx-hook
+    spec:
+      selector:
+        istio: ingressgateway
+      servers:
+      - hosts:
+        - '*'
+        port:
+          name: http
+          number: 80
+          protocol: HTTP
+      - hosts:
+        - '*'
+        port:
+          name: https
+          number: 443
+          protocol: HTTPS
+        tls:
+          mode: PASSTHROUGH
+
+  - apiVersion: networking.istio.io/v1beta1
+    kind: VirtualService
+    metadata:
+      name: nginx-hook
+    spec:
+      gateways:
+        - {{ .Release.Namespace }}/nginx-hook
+      hosts:
+      - "*"
+      http:
+      - name: "nginx-hook"
+        route:
+        - destination:
+            host: nginx-ingress-ingress-nginx-controller.nginx-ingress.svc.cluster.local
+            port:
+              number: 80
+      tls:
+      - match:
+        - port: 443
+          sniHosts:
+          - '*'
+        route:
+        - destination:
+            host: nginx-ingress-ingress-nginx-controller.nginx-ingress.svc.cluster.local
+            port:
+              number: 443

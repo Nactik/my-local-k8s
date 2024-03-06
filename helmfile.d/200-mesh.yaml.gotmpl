@@ -6,3 +6,41 @@ repositories:
   - name: "whatever"
     url: https://git.sia-partners.com/api/v4/projects/1506/packages/generic/whatever-repository/1.0.0
 
+releases:
+  - name: istiod
+    namespace: istio-system
+    chart: istio/istiod
+    version: "^1.15.3"
+    values:
+      - ../values/istio/istiod.yaml.gotmpl
+
+  - name: istio-cni
+    namespace: kube-system
+    chart: istio/cni
+    version: "^1.15.3"
+    values:
+      - ../values/istio/cni.yaml.gotmpl
+
+  - name: istio-ingressgateway
+    namespace: istio-system
+    chart: istio/gateway
+    version: "^1.15.3"
+    disableValidation: true
+    values:
+      - ../values/istio/gateway.yaml.gotmpl
+    needs:
+      - istio-system/istiod
+
+  - name: istio-rbac
+    namespace: istio-system
+    chart: whatever/whatever
+    version: "0.0.3"
+    values:
+      - ../values/istio/rbac.yaml.gotmpl
+
+  - name: k8s-reflector
+    namespace: k8s-reflector
+    chart: emberstack/reflector
+    version: ^7
+    values:
+      - ../values/kubernetes-reflector/values.yaml.gotmpl

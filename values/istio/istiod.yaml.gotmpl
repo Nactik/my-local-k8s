@@ -1,0 +1,41 @@
+pilot:
+    # Resources for a small pilot install
+  resources:
+    requests:
+      cpu: 400m
+      memory: 100Mi
+
+    limits:
+      cpu: null
+      memory: 900Mi
+
+global:
+  proxy:
+    resources:
+      requests:
+        cpu: 20m
+        memory: 170Mi
+      limits:
+        cpu: null
+        memory: 100Mi
+
+meshConfig: 
+  accessLogFile: /dev/stdout
+  concurrency: 8
+  defaultConfig:
+    holdApplicationUntilProxyStarts: true
+
+istio_cni:
+  enabled: true
+  chained: true
+
+sidecarInjectorWebhook:
+  templates:
+    # Override default injection template to remove every initContainers
+    custom: |
+      spec:
+        initContainers: null
+
+  defaultTemplates:
+    - sidecar
+    - custom

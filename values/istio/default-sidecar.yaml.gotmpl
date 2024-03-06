@@ -1,0 +1,14 @@
+manifests:
+- apiVersion: networking.istio.io/v1beta1
+  kind: Sidecar
+  metadata:
+    name: default-sidecar-rules
+  spec:
+    egress:
+      ## Allow egress only to workload inside those ns
+      - hosts:
+        - "istio-system/*"
+        - "knative-serving/*"
+        - "postgresql/*"
+        - "monitoring/*"
+        - "./*" # current ns

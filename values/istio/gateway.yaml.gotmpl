@@ -1,0 +1,44 @@
+replicaCount : 3 ## Chose 3 to be iso with the legacy nginx's LB
+labels:
+  sidecar.istio.io/inject: "true"
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80 ## Increase replicas if CPU usage is above 80%
+
+service:
+    type: NodePort
+    externalTrafficPolicy: Local
+    ports:  
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 443
+      nodePort: 31644
+    - name: http-monitoring
+      port: 15020
+      protocol: TCP
+      targetPort: 15020
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - istio-ingressgateway
+          - key: istio
+            operator: In
+            values:
+            - ingressgateway
+        topologyKey: "topology.kubernetes.io/zone"
