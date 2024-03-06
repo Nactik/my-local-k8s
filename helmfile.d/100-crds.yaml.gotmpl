@@ -1,0 +1,11 @@
+repositories:
+  - name: "istio"
+    url: https://istio-release.storage.googleapis.com/charts
+  - name: "whatever"
+    url: https://git.sia-partners.com/api/v4/projects/1506/packages/generic/whatever-repository/1.0.0
+
+releases:
+  - name: istio-crds
+    namespace: istio-system
+    chart: istio/base
+    version: "^1.15.3"
