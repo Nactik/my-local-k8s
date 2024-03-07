@@ -1,1 +1,6 @@
+{{- $uri := (printf "https://github.com/knative/operator/releases/download/knative-v%s/operator.yaml" "1.13.2") }}
+{{- $content := ( exec "curl" (list "-sL" $uri) ) }}
 manifests:
+{{- range $crd := (splitList "---" $content) }}
+  - {{ $crd | trim | trimPrefix "---" | indent 4 | trim  }}
+{{- end }}
